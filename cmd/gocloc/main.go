@@ -1,14 +1,14 @@
 package main
 
 import (
-	"encoding/json"
+	"encoding/json" // jsonのエンコードとデコード
 	"fmt"
 	"os"
-	"regexp"
-	"strings"
+	"regexp"  // 正規表現検索
+	"strings" // UTF-8 でエンコードされた文字列を操作するための簡単な関数
 
 	"github.com/hhatto/gocloc"
-	"github.com/jessevdk/go-flags"
+	"github.com/jessevdk/go-flags" // CLI引数をサポート
 )
 
 // Version is version string for gocloc command
@@ -40,6 +40,7 @@ var rowLen = 79
 
 // CmdOptions is gocloc command options.
 // It is necessary to use notation that follows go-flags.
+// go-flagの記法に従ったgoclocのコマンドオプション
 type CmdOptions struct {
 	ByFile         bool   `long:"by-file" description:"report results for every encountered source file"`
 	SortTag        string `long:"sort" default:"code" description:"sort based on a certain column" choice:"name" choice:"files" choice:"blank" choice:"comment" choice:"code"`
@@ -219,7 +220,9 @@ func (o *outputBuilder) WriteResult() {
 	o.WriteFooter()
 }
 
+// エントリーポイント
 func main() {
+	// コマンドラインオプション
 	var opts CmdOptions
 	clocOpts := gocloc.NewClocOptions()
 	// parse command line options
@@ -227,14 +230,17 @@ func main() {
 	parser.Name = "gocloc"
 	parser.Usage = "[OPTIONS] PATH[...]"
 
+	// 引数をパース
 	paths, err := flags.Parse(&opts)
 	if err != nil {
 		return
 	}
 
 	// value for language result
+	//言語の結果の値 CとかC++とか
 	languages := gocloc.NewDefinedLanguages()
 
+	// 引数に合わせた出力の追加
 	if opts.ShowVersion {
 		fmt.Printf("%s (%s)\n", Version, GitCommit)
 		return
@@ -245,6 +251,7 @@ func main() {
 		return
 	}
 
+	// ヘルプを表示
 	if len(paths) <= 0 {
 		parser.WriteHelp(os.Stdout)
 		return
